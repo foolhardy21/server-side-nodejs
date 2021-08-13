@@ -37,6 +37,7 @@ function book_update_post(req, res) {
 };
 
 module.exports = {
+    index,
     book_list,
     book_detail,
     book_create_get,
