@@ -27,8 +27,15 @@ function index(req, res) {
     })
 }
 
-function book_list(req, res) {
-    res.send('NOT IMPLEMENTED: Book list')
+function book_list(req, res, next) {
+    Book.find({}, 'title author')
+        .populate('author')
+        .exec(function(err, list_books) {
+            if(err) {
+                return next(err)
+            }
+            res.render('book_list',{ title: 'Book List', book_list: list_books })
+        })
 }
 
 function book_detail(req, res) {
