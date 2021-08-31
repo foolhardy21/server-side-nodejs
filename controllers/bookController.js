@@ -39,7 +39,29 @@ function book_list(req, res, next) {
 }
 
 function book_detail(req, res) {
-    res.send('NOT IMPLEMENTED: Book detail' + req.params.id)
+    async.parallel({
+        book: function(callback) {
+            Book.findById(req.params.id)
+                .populate('author')
+                .populate('genre')
+                .exec(callback)
+        },
+        book_instance: function(callback) {
+            BookInstance.find({ 'book': req.params.id })
+                .exec(callback)
+        },
+    }, function(err, results) {
+        if(err) {
+            return next(err)
+        } 
+        if(results.book == null) {
+            let err = new Error('Book not found')
+            err.status = 404
+            return next(err)
+        }
+
+        res.render('book_detail', { title: 'Book Detail', book: results.book, book_instances: results.book_instance })
+    })
 }
 
 function book_create_get(req, res) {
