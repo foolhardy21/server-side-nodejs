@@ -36,7 +36,7 @@ router.get('/authors', author_controller.author_list);
 
 
 router.get('/genre/create', genre_controller.genre_create_get);
-router.post('/genre/create', genre_controller.genre_create_post);
+router.post('/genre/create', genre_controller.genre_create_post_validation, genre_controller.genre_create_post);
 
 router.get('/genre/:id/delete', genre_controller.genre_delete_get);
 router.post('/genre/:id/delete', genre_controller.genre_delete_post);
