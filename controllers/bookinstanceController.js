@@ -1,3 +1,4 @@
+const bookinstance = require('../models/bookinstance')
 const BookInstance = require('../models/bookinstance')
 
 function bookinstance_list(req, res, next) {
@@ -12,7 +13,20 @@ function bookinstance_list(req, res, next) {
 }
 
 function bookinstance_detail(req, res) {
-    res.send('NOT IMPLEMENTED: BookInstance detail' + req.params.id)
+    BookInstance.findById(req.params.id)
+        .populate('book')
+        .exec(function(err, bookinstance) {
+            if(err) {
+                return next(err)
+            }
+            if(bookinstance==null) {
+                let err = new Error('book copy not found')
+                err.status = 404
+                return next(err)
+            }
+            res.render('bookinstance_detail', { title: 'Copy: '+ bookinstance.book.title, bookinstance: bookinstance })
+        })
+
 }
 
 function bookinstance_create_get(req, res) {
