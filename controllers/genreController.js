@@ -92,15 +92,3 @@ exports.genre_update_get = function(req, res) {
 exports.genre_update_post = function(req, res) {
     res.send('NOT IMPLEMENTED: Genre update POST');
 };
-
-// module.exports = {
-//     // genre_list,
-//     genre_detail,
-//     genre_create_get,
-//     genre_create_post,
-//     genre_create_post_validation,
-//     genre_delete_get,
-//     genre_delete_post,
-//     genre_update_get,
-//     genre_update_post,
-// }
