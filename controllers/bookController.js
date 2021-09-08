@@ -2,10 +2,10 @@ const Book = require('../models/book')
 const BookInstance = require('../models/bookinstance')
 const Author = require('../models/author')
 const Genre = require('../models/genre')
-
 const async = require('async')
+const { body, validationResult } = require('express-validator')
 
-function index(req, res) {
+exports.index = function(req, res) {
     async.parallel({
         book_count: function(callback) {
             Book.countDocuments({}, callback)
@@ -27,7 +27,7 @@ function index(req, res) {
     })
 }
 
-function book_list(req, res, next) {
+exports.book_list = function(req, res, next) {
     Book.find({}, 'title author')
         .populate('author')
         .exec(function(err, list_books) {
@@ -38,7 +38,7 @@ function book_list(req, res, next) {
         })
 }
 
-function book_detail(req, res) {
+exports.book_detail = function(req, res) {
     async.parallel({
         book: function(callback) {
             Book.findById(req.params.id)
@@ -64,38 +64,85 @@ function book_detail(req, res) {
     })
 }
 
-function book_create_get(req, res) {
-    res.send('NOT IMPLEMENTED: Book create get')
+exports.book_create_get = function(req, res) {
+    async.parallel({
+        authors: function(callback) {
+            Author.find(callback)
+        },
+        genres: function(callback) {
+            Genre.find(callback)
+        },
+    }, function(err, results) {
+        if(err) {
+            return next(err)
+        }
+        res.render('book_form', { title: 'Create Book', authors: results.authors, genres: results.genres })
+    })
 }
 
-function book_create_post(re, res) {
-    res.send('NOT IMPLEMENTED: Book create post')
-}
+exports.book_create_post = [
+    function(req, res, next) {
+        if(!(req.body.genre instanceof Array)) {
+            if(typeof req.body.genre === 'undefined')
+                req.body.genre = []
+            else
+                req.body.genre = new Array(req.body.genre)
+        }
+        next()
+    },
 
-function book_delete_get (req, res) {
+    body('title', 'Title must not be empty').trim().isLength({ min: 1 }).escape(),
+    body('author', 'Author must not be empty').trim().isLength({ min: 1 }).escape(),
+    body('summary', 'Summary must not be empty').trim().isLength({ min: 1 }).escape(),
+    body('isbn', 'ISBN must not be empty').trim().isLength({ min: 1 }).escape(),
+    body('genre.*').escape(),
+
+    function(req, res, next) {
+        const errors = validationResult(req)
+
+        let book = new Book({
+            title: req.body.title,
+            author: req.body.author,
+            summary: req.body.summary,
+            isbn: req.body.isbn,
+            genre: req.body.genre
+        })
+
+        if(!errors.isEmpty()) {
+            async.parallel({
+                authors: function(callback) {
+                    Author.find(callback)
+                },
+                genres: function(callback) {
+                    Genre.find(callback)
+                }
+            }, function(err, results) {
+                if(err) {
+                    return next(err)
+                }
+                for(let i = 0; i < results.genres.length; i++ ) {
+                    if( book.genre.indexOf(results.genres[i]._id) > -1 ) {
+                        results.genres[i].checked = 'true'
+                    }
+                }
+            })
+        }
+    }
+    
+]
+
+exports.book_delete_get = function(req, res) {
     res.send('NOT IMPLEMENTED: Book delete GET');
 };
 
-function book_delete_post(req, res) {
+exports.book_delete_post = function(req, res) {
     res.send('NOT IMPLEMENTED: Book delete POST');
 };
 
-function book_update_get(req, res) {
+exports.book_update_get = function(req, res) {
     res.send('NOT IMPLEMENTED: Book update GET');
 };
 
-function book_update_post(req, res) {
+exports.book_update_post = function(req, res) {
     res.send('NOT IMPLEMENTED: Book update POST');
 };
-
-module.exports = {
-    index,
-    book_list,
-    book_detail,
-    book_create_get,
-    book_create_post,
-    book_delete_get,
-    book_delete_post,
-    book_update_get,
-    book_update_post,
-}
