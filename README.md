@@ -10,7 +10,7 @@ Skeleton website and project structre built from express application generator.
 
 
 ### Entity Relationship Diagram
-(./relation-diagram/1.JPG)
+![](./relation-diagram/1.JPG)
 
 ### Built with
 
