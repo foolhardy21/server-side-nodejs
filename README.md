@@ -6,7 +6,7 @@ This is the project from MDN Web Docs giving an introduction to server side rend
 
 User can view all the information and perform CRUD operations. Router to direct the request to specific controller function where data is first fetched using data models and served after rendering it on a view template. 
 
-Skeleton website and project structre built from express application generator.
+Skeleton website and project structure built from express application generator.
 
 
 ### Entity Relationship Diagram
@@ -15,7 +15,7 @@ Skeleton website and project structre built from express application generator.
 ### Built with
 
 - NodeJS as JS runtime
-- Express as backend
+- Express as backend framework
 - MongoDB as database
 - Mongoose as object data model
 - Pug as template engine

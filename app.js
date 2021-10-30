@@ -4,6 +4,7 @@ var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 var mongoose = require('mongoose');
+var mongodbUri = require('./config')
 
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
@@ -11,11 +12,7 @@ var catalogRouter = require('./routes/catalog')
 
 var app = express();
 
-const username = process.argv[2]
-const password = process.argv[3]
-const dbname = process.argv[4]
-mongoose.connect(`mongodb+srv://${username}:${password}@cluster0.fafup.mongodb.net/${dbname}?retryWrites=true&w=majority`,
-    {useNewUrlParser: true, useUnifiedTopology: true})
+mongoose.connect(mongodbUri, {useNewUrlParser: true, useUnifiedTopology: true})
 var db = mongoose.connection;
 db.on('error',console.error.bind(console, 'connection error'))
 
